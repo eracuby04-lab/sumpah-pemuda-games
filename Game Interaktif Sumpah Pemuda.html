@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Interaktif Sumpah Pemuda - Bangkit Pemuda Indonesia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'merah-pancasila': '#D61C1C',
+                        'merah-gelap': '#990000',
+                        'emas-juara': '#FFD700',
+                        'emas-tua': '#DAA520',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Animated Red and White Flag Background Effect */
+        body {
+            background: linear-gradient(180deg, #CE1126 0%, #B00020 48%, #FFFFFF 52%, #F4F4F9 100%);
+            background-size: 100% 200%;
+            animation: flagWave 12s ease-in-out infinite alternate;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        @keyframes flagWave {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 0% 50%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        /* Horizontal Ellipse Styling */
+        .ellipse-card {
+            border-radius: 50% / 18%;
+            background: rgba(255, 255, 255, 0.96);
+            border: 5px solid #FFD700;
+            box-shadow: 0 15px 35px rgba(180, 0, 0, 0.35), inset 0 0 15px rgba(214, 28, 28, 0.15);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .ellipse-card {
+                border-radius: 35px; /* Responsive fallback for smaller mobile screens */
+            }
+        }
+
+        .ellipse-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(214, 28, 28, 0.45), inset 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        /* 3D Flip Card Animation Container */
+        .flip-container {
+            perspective: 1200px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-front, .flip-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            width: 100%;
+        }
+
+        .flip-back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Glowing text effects */
+        .glow-text-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .glow-text-red {
+            text-shadow: 0 2px 4px rgba(150, 0, 0, 0.5);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D61C1C;
+            border-radius: 4px;
+        }
+
+        /* Badge Glow */
+        .badge-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-merah-gelap bg-opacity-95 text-white sticky top-0 z-50 shadow-xl border-b-4 border-emas-juara">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('menu-section')">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-emas-juara shadow">
+                    <i class="fa-solid fa-flag text-merah-pancasila text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-lg sm:text-xl tracking-wider text-white flex items-center gap-2">
+                        SUMPAH PEMUDA <span class="text-xs bg-emas-juara text-black px-2 py-0.5 rounded-full font-bold">1928</span>
+                    </h1>
+                    <p class="text-xs text-yellow-200 hidden sm:block">Game Edukasi & Quiz Kuis Interaktif</p>
+                </div>
+            </div>
+
+            <!-- Audio Controls & Nav Buttons -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button id="btn-audio-bgm" onclick="toggleBGM()" class="bg-red-800 hover:bg-red-700 text-yellow-300 border border-yellow-400/50 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow">
+                    <i id="bgm-icon" class="fa-solid fa-music"></i>
+                    <span id="bgm-text" class="hidden md:inline">Musik ON</span>
+                </button>
+
+                <button id="btn-audio-tts" onclick="toggleTTS()" class="bg-red-800 hover:bg-red-700 text-white border border-white/30 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 transition shadow">
+                    <i id="tts-icon" class="fa-solid fa-volume-high"></i>
+                    <span id="tts-text" class="hidden md:inline">Suara Motivasi ON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center items-center">
+
+        <!-- ================= SECTION 1: MENU UTAMA ================= -->
+        <section id="menu-section" class="w-full text-center my-auto transition-all duration-500">
+            <!-- Hero Banner Banner Oval -->
+            <div class="ellipse-card p-8 sm:p-12 mb-8 mx-auto max-w-4xl border-4 border-emas-juara">
+                <div class="inline-block bg-merah-pancasila text-white px-4 py-1 rounded-full font-bold text-sm tracking-wide mb-3 shadow">
+                    <i class="fa-solid fa-star text-yellow-300 mr-1"></i> EDISI EDUMEDIA REPUBLIK INDONESIA
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-display font-black text-merah-gelap mb-4 glow-text-red leading-tight">
+                    GAME SUMPAH PEMUDA
+                </h2>
+                <p class="text-gray-700 text-sm sm:text-base max-w-2xl mx-auto mb-6 leading-relaxed font-medium">
+                    Uji pengetahuan sejarah perjuangan para Pemuda Indonesia tahun 1928! Nikmati **25 Soal Pilihan Ganda** yang dikemas unik dalam **Desain Elips Horizontal Buka-Tutup**, dilengkapi penjelasan, narasi suara motivasi, dan visual pahlawan.
+                </p>
+
+                <!-- Action Buttons Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
+                    <button onclick="startQuiz()" class="bg-gradient-to-r from-red-600 to-merah-pancasila hover:from-red-700 hover:to-red-800 text-white font-extrabold text-lg px-6 py-4 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 border-2 border-emas-juara flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-play text-2xl text-emas-juara"></i>
+                        <span>MULAI MAIN</span>
+                        <span class="text-xs font-normal text-yellow-200">(25 Soal Elips)</span>
+                    </button>
+
+                    <button onclick="showSection('materi-section')" class="bg-gradient-to-r from-yellow-500 to-emas-tua hover:from-yellow-600 hover:to-yellow-700 text-white font-extrabold text-lg px-6 py-4 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 border-2 border-white flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-book-open text-2xl"></i>
+                        <span>BACA MATERI</span>
+                        <span class="text-xs font-normal text-yellow-100">(Rangkuman Sejarah)</span>
+                    </button>
+
+                    <button onclick="showSection('pahlawan-section')" class="bg-gradient-to-r from-gray-800 to-gray-900 hover:from-black hover:to-gray-800 text-white font-extrabold text-lg px-6 py-4 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 border-2 border-emas-juara flex flex-col items-center justify-center gap-1">
+                        <i class="fa-solid fa-users-viewfinder text-2xl text-emas-juara"></i>
+                        <span>GALERI TOKOH</span>
+                        <span class="text-xs font-normal text-gray-300">(Pahlawan Pemuda)</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: MATERI ELSIP HORIZONTAL ================= -->
+        <section id="materi-section" class="w-full hidden transition-all duration-500">
+            <div class="flex justify-between items-center mb-6 bg-white bg-opacity-90 p-4 rounded-2xl shadow border-2 border-merah-pancasila">
+                <h2 class="text-2xl font-display font-bold text-merah-gelap flex items-center gap-2">
+                    <i class="fa-solid fa-scroll text-emas-tua"></i> Materi Lengkap Sumpah Pemuda
+                </h2>
+                <button onclick="showSection('menu-section')" class="bg-merah-pancasila hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali Ke Menu
+                </button>
+            </div>
+
+            <div class="space-y-6 max-w-4xl mx-auto">
+                <!-- Card Materi 1: Latar Belakang -->
+                <div class="ellipse-card p-6 sm:p-10 border-4 border-merah-pancasila">
+                    <div class="flex items-center gap-4 mb-3 border-b-2 border-red-100 pb-2">
+                        <div class="w-12 h-12 rounded-full bg-merah-pancasila text-white flex items-center justify-center font-bold text-xl shadow">1</div>
+                        <h3 class="text-xl font-bold text-merah-gelap">Latar Belakang Sumpah Pemuda</h3>
+                    </div>
+                    <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+                        Sumpah Pemuda dilatarbelakangi oleh munculnya organisasi-organisasi pemuda bersifat kedaerahan seperti <i>Budi Utomo (1908), Jong Java, Jong Sumatranen Bond, Jong Ambon, Jong Celebes</i>, dan lainnya. Para pemuda menyadari bahwa perjuangan bersifat kedaerahan mudah dipatahkan oleh penjajah Belanda. Oleh karena itu, dibutuhkan persatuan nasional seluruh pemuda Nusantara.
+                    </p>
+                </div>
+
+                <!-- Card Materi 2: Kongres Pemuda I & II -->
+                <div class="ellipse-card p-6 sm:p-10 border-4 border-emas-juara">
+                    <div class="flex items-center gap-4 mb-3 border-b-2 border-yellow-100 pb-2">
+                        <div class="w-12 h-12 rounded-full bg-emas-tua text-white flex items-center justify-center font-bold text-xl shadow">2</div>
+                        <h3 class="text-xl font-bold text-merah-gelap">Kongres Pemuda I & II</h3>
+                    </div>
+                    <ul class="text-gray-700 text-sm sm:text-base leading-relaxed space-y-2 list-disc list-inside">
+                        <li><b>Kongres Pemuda I (30 April - 2 Mei 1926):</b> Dilaksanakan di Batavia (Jakarta), dipimpin oleh M. Tabrani. Merumuskan gagasan persatuan bahasa dan pemuda.</li>
+                        <li><b>Kongres Pemuda II (27 - 28 Oktober 1928):</b> Diselenggarakan di 3 lokasi berbeda (Gedung Katholieke Jongenlingen Bond, Gedung Oost-Java Bioscoop, dan Gedung Kramat 106). Diketuai oleh <b>Soegondo Djojopoespito</b>. Pada kongres inilah Sumpah Pemuda dicetuskan!</li>
+                    </ul>
+                </div>
+
+                <!-- Card Materi 3: Tiga Ikrar Sumpah Pemuda -->
+                <div class="ellipse-card p-6 sm:p-10 border-4 border-merah-pancasila bg-red-50">
+                    <div class="text-center mb-4">
+                        <span class="bg-merah-pancasila text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Dokumen Sejarah</span>
+                        <h3 class="text-2xl font-black text-merah-gelap mt-2">Naskah Sumpah Pemuda (28 Oktober 1928)</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border-2 border-dashed border-red-300 text-gray-800 space-y-3 font-serif italic text-sm sm:text-base shadow-inner">
+                        <p class="font-bold text-center not-italic text-merah-pancasila">POETOESAN KONGRES PEMOEDA-PEMOEDA INDONESIA</p>
+                        <p><b>Pertama:</b> Kami poetra dan poetri Indonesia, mengaku beralamt darah jang satoe, tanah Indonesia.</p>
+                        <p><b>Kedoea:</b> Kami poetra dan poetri Indonesia mengaku berbangsa jang satoe, bangsa Indonesia.</p>
+                        <p><b>Ketiga:</b> Kami poetra dan poetri Indonesia mendjoendjoeng bahasa persatoean, bahasa Indonesia.</p>
+                    </div>
+                </div>
+
+                <!-- Card Materi 4: Peristiwa Penting Lainnya -->
+                <div class="ellipse-card p-6 sm:p-10 border-4 border-emas-juara">
+                    <div class="flex items-center gap-4 mb-3 border-b-2 border-yellow-100 pb-2">
+                        <div class="w-12 h-12 rounded-full bg-merah-pancasila text-white flex items-center justify-center font-bold text-xl shadow">3</div>
+                        <h3 class="text-xl font-bold text-merah-gelap">Lagu Indonesia Raya & Bendera Merah Putih</h3>
+                    </div>
+                    <p class="text-gray-700 text-sm sm:text-base leading-relaxed">
+                        Pada malam penutupan Kongres Pemuda II tanggal 28 Oktober 1928 di Gedung Kramat 106 Jakarta, lagu <b>Indonesia Raya</b> ciptaan <b>Wage Rudolf Soepratman</b> diperdengarkan untuk pertama kalinya secara instrumental menggunakan biola. Bendera Merah Putih juga dikibarkan menyertai peristiwa bersejarah ini.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: GALERI TOKOH / PAHLAWAN ================= -->
+        <section id="pahlawan-section" class="w-full hidden transition-all duration-500">
+            <div class="flex justify-between items-center mb-6 bg-white bg-opacity-90 p-4 rounded-2xl shadow border-2 border-merah-pancasila">
+                <h2 class="text-2xl font-display font-bold text-merah-gelap flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-merah-pancasila"></i> Tokoh & Pahlawan Sumpah Pemuda
+                </h2>
+                <button onclick="showSection('menu-section')" class="bg-merah-pancasila hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali Ke Menu
+                </button>
+            </div>
+
+            <!-- Grid Kartu Pahlawan Elips -->
+            <div id="hero-gallery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                <!-- Javascript will populate dynamic horizontal ellipse hero cards here -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: GAME QUIZ (25 SOAL ELIPS HORIZONTAL BUKA-TUTUP) ================= -->
+        <section id="quiz-section" class="w-full hidden transition-all duration-300">
+            <!-- Quiz Bar Status Header -->
+            <div class="bg-white bg-opacity-95 p-4 rounded-2xl shadow-lg border-2 border-emas-juara mb-6 flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="bg-merah-pancasila text-white font-bold px-3 py-1 rounded-xl text-sm flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-layer-group text-yellow-300"></i> Soal <span id="current-question-num">1</span>/25
+                    </span>
+                    <div class="w-32 sm:w-48 bg-gray-200 h-3 rounded-full overflow-hidden border border-gray-300">
+                        <div id="progress-bar-fill" class="bg-gradient-to-r from-yellow-400 to-merah-pancasila h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div id="quiz-timer" class="bg-yellow-100 text-merah-gelap border border-yellow-400 font-extrabold px-3 py-1 rounded-xl text-sm flex items-center gap-1">
+                        <i class="fa-regular fa-clock text-merah-pancasila"></i> <span id="timer-display">00:00</span>
+                    </div>
+                    <div class="bg-green-100 text-green-800 border border-green-300 font-extrabold px-3 py-1 rounded-xl text-sm flex items-center gap-1">
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Skor: <span id="live-score">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD SOAL ELIPS HORIZONTAL BUKA-TUTUP (3D FLIP CONTAINER) -->
+            <div class="flip-container max-w-4xl mx-auto min-h-[420px]">
+                <div id="question-flip-card" class="flip-card-inner">
+                    
+                    <!-- SISI DEPAN KARTU ELIPS (TUTUP - Cover Kartu) -->
+                    <div class="flip-front">
+                        <div class="ellipse-card p-8 sm:p-12 text-center flex flex-col justify-center items-center min-h-[400px] border-8 border-emas-juara bg-gradient-to-b from-white to-red-50">
+                            <div class="w-20 h-20 bg-merah-pancasila rounded-full flex items-center justify-center text-white text-3xl mb-4 border-4 border-emas-juara shadow-lg badge-glow">
+                                <i class="fa-solid fa-envelope-open-text"></i>
+                            </div>
+                            <span class="text-xs font-extrabold tracking-widest text-merah-pancasila uppercase mb-1">Kartu Soal No. <span id="cover-q-num">1</span></span>
+                            <h3 id="cover-q-title" class="text-xl sm:text-2xl font-display font-black text-merah-gelap mb-4">
+                                Pertanyaan Sumpah Pemuda
+                            </h3>
+                            <p class="text-gray-600 text-xs sm:text-sm max-w-md mb-6">
+                                Kartu ini masih **Tertutup**. Klik tombol di bawah ini untuk **Membuka (Flip/Unfold)** kartu soal dan memilih jawaban yang tepat!
+                            </p>
+                            
+                            <!-- Hero Icon Avatar Preview for Question -->
+                            <div id="cover-hero-avatar" class="flex items-center justify-center gap-2 mb-6 bg-red-100/70 border border-red-200 px-4 py-2 rounded-full text-xs font-semibold text-merah-gelap">
+                                <i class="fa-solid fa-user-tie text-merah-pancasila"></i> Tokoh Terkait: <span id="cover-hero-name">Sejarah Sumpah Pemuda</span>
+                            </div>
+
+                            <button onclick="openQuestionCard()" class="bg-gradient-to-r from-red-600 to-merah-pancasila hover:from-red-700 hover:to-red-800 text-white font-extrabold text-base sm:text-lg px-8 py-3.5 rounded-full shadow-xl hover:scale-105 transition transform border-2 border-emas-juara flex items-center gap-2">
+                                <i class="fa-solid fa-lock-open text-yellow-300"></i> BUKA SOAL SEKARANG
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SISI BELAKANG KARTU ELIPS (BUKA - Isinya Soal & Pilihan Ganda) -->
+                    <div class="flip-back">
+                        <div class="ellipse-card p-6 sm:p-10 border-8 border-merah-pancasila bg-white min-h-[400px] flex flex-col justify-between">
+                            <div>
+                                <!-- Header Soal -->
+                                <div class="flex justify-between items-center mb-3 border-b-2 border-red-100 pb-2">
+                                    <span class="text-xs font-bold text-merah-pancasila bg-red-100 px-3 py-1 rounded-full flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-question"></i> Soal <span id="card-q-num">1</span>
+                                    </span>
+                                    <button onclick="closeQuestionCard()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full font-semibold transition flex items-center gap-1" title="Tutup Kartu Kembali">
+                                        <i class="fa-solid fa-rotate-left"></i> Tutup Kartu
+                                    </button>
+                                </div>
+
+                                <!-- Pertanyaan -->
+                                <h3 id="question-text" class="text-base sm:text-xl font-bold text-gray-900 mb-6 leading-snug">
+                                    Teks pertanyaan akan tampil di sini?
+                                </h3>
+
+                                <!-- Pilihan Ganda (Grid 2x2) -->
+                                <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+                                    <!-- Option buttons generated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Area Umpan Balik Teks & Motivasi (Akan muncul setelah dijawab) -->
+                            <div id="feedback-box" class="hidden mt-2 p-3 rounded-2xl border text-center transition-all">
+                                <p id="feedback-status" class="font-extrabold text-sm sm:text-base"></p>
+                                <p id="feedback-motivation" class="text-xs sm:text-sm font-semibold italic mt-0.5"></p>
+                            </div>
+
+                            <!-- Footer Navigasi Soal -->
+                            <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-100">
+                                <button id="btn-prev-q" onclick="prevQuestion()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition disabled:opacity-40">
+                                    <i class="fa-solid fa-chevron-left mr-1"></i> Soal Sebelumnya
+                                </button>
+                                <button id="btn-next-q" onclick="nextQuestion()" class="bg-merah-pancasila hover:bg-red-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition shadow flex items-center gap-1">
+                                    <span>Soal Selanjutnya</span> <i class="fa-solid fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 5: HASIL AKHIR & RESUME (SCOREBOARD) ================= -->
+        <section id="result-section" class="w-full hidden transition-all duration-500">
+            <div class="ellipse-card p-8 sm:p-12 text-center max-w-3xl mx-auto border-8 border-emas-juara bg-white shadow-2xl">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-tr from-yellow-400 to-emas-juara text-merah-gelap rounded-full flex items-center justify-center text-4xl mb-4 border-4 border-white shadow-lg badge-glow">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-display font-black text-merah-gelap mb-1 glow-text-red">
+                    HASIL AKHIR QUIZ
+                </h2>
+                <p class="text-sm text-gray-600 mb-6 font-semibold">Sumpah Pemuda 28 Oktober 1928</p>
+
+                <!-- Big Score Showcase -->
+                <div class="bg-gradient-to-r from-red-50 via-yellow-50 to-red-50 p-6 rounded-3xl border-2 border-emas-juara max-w-md mx-auto mb-6">
+                    <p class="text-xs font-extrabold uppercase tracking-widest text-merah-pancasila mb-1">Skor Akhir Anda</p>
+                    <div id="final-score" class="text-5xl sm:text-6xl font-black text-merah-gelap my-1">0</div>
+                    <p id="predikat-text" class="text-base font-bold text-yellow-700 mt-2">"Pemuda Pejuang Utama!"</p>
+                </div>
+
+                <!-- Stats Summary Row -->
+                <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6 text-center">
+                    <div class="bg-green-50 border border-green-200 p-3 rounded-2xl">
+                        <span class="text-xs text-green-700 font-bold block">Benar</span>
+                        <span id="stat-correct" class="text-xl font-black text-green-700">0</span>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-3 rounded-2xl">
+                        <span class="text-xs text-red-700 font-bold block">Salah</span>
+                        <span id="stat-wrong" class="text-xl font-black text-red-700">0</span>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-3 rounded-2xl">
+                        <span class="text-xs text-blue-700 font-bold block">Waktu</span>
+                        <span id="stat-time" class="text-xl font-black text-blue-700">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Final Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-3 max-w-md mx-auto">
+                    <button onclick="startQuiz()" class="bg-merah-pancasila hover:bg-red-800 text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-lg transition border border-yellow-300 flex-1 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                    </button>
+                    <button onclick="showSection('review-section')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-lg transition border border-white flex-1 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Review Jawaban
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 6: REVIEW JAWABAN ================= -->
+        <section id="review-section" class="w-full hidden transition-all duration-500">
+            <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow border-2 border-emas-juara">
+                <h2 class="text-xl sm:text-2xl font-display font-bold text-merah-gelap flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-merah-pancasila"></i> Review Pembahasan 25 Soal
+                </h2>
+                <button onclick="showSection('result-section')" class="bg-merah-pancasila hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali Ke Skor
+                </button>
+            </div>
+
+            <div id="review-list-container" class="space-y-4 max-w-4xl mx-auto">
+                <!-- Javascript will inject answer reviews here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-merah-gelap text-white py-4 mt-8 border-t-2 border-emas-juara text-center text-xs">
+        <p class="font-semibold">Game Interaktif Sumpah Pemuda &copy; 2026 - Edukasi Sejarah Bangsa Indonesia</p>
+        <p class="text-yellow-200 text-[10px] mt-1">"Satu Nusa, Satu Bangsa, Satu Bahasa Kita"</p>
+    </footer>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. DATA SOAL SEJARAH SUMPAH PEMUDA (25 SOAL LENGKAP)
+           ========================================================================== */
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Tanggal berapakah Sumpah Pemuda diperingati setiap tahunnya di Indonesia?",
+                options: ["17 Agustus", "28 Oktober", "10 November", "20 Mei"],
+                answer: 1, // B (Index 1)
+                hero: "Soegondo Djojopoespito",
+                explanation: "Sumpah Pemuda dicetuskan pada tanggal 28 Oktober 1928 di Batavia (Jakarta) pada hari kedua Kongres Pemuda II."
+            },
+            {
+                id: 2,
+                question: "Siapakah ketua panitia Kongres Pemuda II yang menghasilkan Sumpah Pemuda?",
+                options: ["Mohammad Yamin", "Soegondo Djojopoespito", "W.R. Soepratman", "Amir Sjarifoeddin"],
+                answer: 1, // B
+                hero: "Soegondo Djojopoespito",
+                explanation: "Kongres Pemuda II diketuai oleh Soegondo Djojopoespito dari Perhimpunan Pelajar-Pelajar Indonesia (PPPI)."
+            },
+            {
+                id: 3,
+                question: "Tokoh yang merumuskan teks naskah Sumpah Pemuda adalah...",
+                options: ["Mohammad Yamin", "Ir. Soekarno", "Sutan Sjahrir", "M. Tabrani"],
+                answer: 0, // A
+                hero: "Mohammad Yamin",
+                explanation: "Mohammad Yamin merumuskan naskah Sumpah Pemuda di atas selembar kertas yang kemudian disodorkan kepada Soegondo."
+            },
+            {
+                id: 4,
+                question: "Lagu 'Indonesia Raya' ciptaan W.R. Soepratman pertama kali diperdengarkan secara instrumental menggunakan alat musik...",
+                options: ["Gitar", "Piano", "Biola", "Seruling"],
+                answer: 2, // C
+                hero: "Wage Rudolf Soepratman",
+                explanation: "W.R. Soepratman memainkan lagu Indonesia Raya secara instrumental dengan gesekan biola tanpa syair pada malam penutupan Kongres Pemuda II."
+            },
+            {
+                id: 5,
+                question: "Di kota manakah Kongres Pemuda II diselenggarakan pada tahun 1928?",
+                options: ["Yogyakarta", "Bandung", "Batavia (Jakarta)", "Surabaya"],
+                answer: 2, // C
+                hero: "Gedung Kramat 106",
+                explanation: "Kongres Pemuda II dilaksanakan di Batavia (sekarang Jakarta) yang terbagi di 3 gedung berbeda."
+            },
+            {
+                id: 6,
+                question: "Gedung tempat dibacakannya Ikrar Sumpah Pemuda pada 28 Oktober 1928 sekarang dijadikan...",
+                options: ["Museum Nasional", "Museum Sumpah Pemuda", "Gedung Kebangkitan Nasional", "Museum Fatahillah"],
+                answer: 1, // B
+                hero: "Sie Kong Lian",
+                explanation: "Gedung di Jalan Kramat Raya 106 Jakarta tempat penutupan Kongres Pemuda II kini dijadikan Museum Sumpah Pemuda."
+            },
+            {
+                id: 7,
+                question: "Organisasi pemuda yang memprakarsai penyelenggaraan Kongres Pemuda II adalah...",
+                options: ["Budi Utomo", "PPPI (Perhimpunan Pelajar-Pelajar Indonesia)", "Jong Java", "Jong Sumatranen Bond"],
+                answer: 1, // B
+                hero: "Soegondo Djojopoespito",
+                explanation: "PPPI (Perhimpunan Pelajar-Pelajar Indonesia) yang beranggotakan mahasiswa Batavia dan Bandung memprakarsai Kongres Pemuda II."
+            },
+            {
+                id: 8,
+                question: "Siapakah yang menjabat sebagai Wakil Ketua panitia Kongres Pemuda II?",
+                options: ["R.M. Djoko Marsaid", "Amir Sjarifoeddin", "Johan Mohammad Cai", "Senduk"],
+                answer: 0, // A
+                hero: "R.M. Djoko Marsaid",
+                explanation: "R.M. Djoko Marsaid yang mewakili Jong Java menjabat sebagai Wakil Ketua Kongres Pemuda II."
+            },
+            {
+                id: 9,
+                question: "Berikut ini yang BUKAN merupakan tiga poin isi Sumpah Pemuda adalah...",
+                options: ["Satu Nusa", "Satu Bangsa", "Satu Bahasa", "Satu Agama"],
+                answer: 3, // D
+                hero: "Tiga Ikrar Pemuda",
+                explanation: "Isi Sumpah Pemuda menyatukan Bertumpah darah satu (Nusa), Berbangsa satu (Bangsa), dan Menjunjung Bahasa persatuan (Bahasa Indonesia)."
+            },
+            {
+                id: 10,
+                question: "Siapakah ketua dari pelaksanaan Kongres Pemuda I yang diselenggarakan pada tahun 1926?",
+                options: ["M. Tabrani", "Soegondo", "Moh. Yamin", "Ruskani"],
+                answer: 0, // A
+                hero: "M. Tabrani",
+                explanation: "M. Tabrani memimpin Kongres Pemuda I (1926) yang mengawali gagasan bahasa persatuan Indonesia."
+            },
+            {
+                id: 11,
+                question: "Organisasi pemuda asal Sumatra yang ikut serta aktif dalam Sumpah Pemuda adalah...",
+                options: ["Jong Celebes", "Jong Sumatranen Bond", "Jong Ambon", "Sekar Rukun"],
+                answer: 1, // B
+                hero: "Mohammad Yamin",
+                explanation: "Jong Sumatranen Bond adalah pemuda dari Sumatra, tempat Mohammad Yamin berkiprah sebelum Kongres."
+            },
+            {
+                id: 12,
+                question: "Siapakah pemilik rumah / gedung Kramat 106 yang bersedia tempatnya dipakai untuk lokasi Kongres Pemuda II?",
+                options: ["Sie Kong Lian", "Souw Beng Kong", "Tan Malaka", "Oei Tiong Ham"],
+                answer: 0, // A
+                hero: "Sie Kong Lian",
+                explanation: "Sie Kong Lian adalah warga Tionghoa yang mengizinkan rumah pemondokannya di Jl. Kramat 106 dipergunakan sebagai tempat Kongres."
+            },
+            {
+                id: 13,
+                question: "Tokoh pemuda yang menjabat sebagai Bendahara dalam kepanitiaan Kongres Pemuda II adalah...",
+                options: ["Amir Sjarifoeddin", "Soekarno", "S. Mangoensarkoro", "Mohammad Hatta"],
+                answer: 0, // A
+                hero: "Amir Sjarifoeddin",
+                explanation: "Amir Sjarifoeddin dari Jong Bataks Bond bertindak sebagai Bendahara Kongres Pemuda II."
+            },
+            {
+                id: 14,
+                question: "Mengapa Bahasa Melayu dipilih dan dikembangkan menjadi Bahasa Indonesia dalam Sumpah Pemuda?",
+                options: ["Karena bahasa penjajah", "Karena merupakan lingua franca (bahasa pergaulan) yang dinamis", "Karena paling sulit dipelajari", "Karena hanya dipakai di satu daerah"],
+                answer: 1, // B
+                hero: "Mohammad Yamin",
+                explanation: "Bahasa Melayu telah menjadi Lingua Franca (bahasa perantara) antar-suku di Nusantara selama berabad-abad sehingga mudah diterima."
+            },
+            {
+                id: 15,
+                question: "Kongres Pemuda II berlangsung selama berapa hari?",
+                options: ["1 Hari", "2 Hari", "3 Hari", "1 Minggu"],
+                answer: 1, // B
+                hero: "Kongres Pemuda II",
+                explanation: "Kongres Pemuda II berlangsung selama 2 hari yaitu Sabtu 27 Oktober dan Minggu 28 Oktober 1928."
+            },
+            {
+                id: 16,
+                question: "Rapat pertama Kongres Pemuda II pada Sabtu 27 Oktober 1928 dilaksanakan di gedung...",
+                options: ["Katholieke Jongenlingen Bond (KJB)", "Oost-Java Bioscoop", "Gedung Kramat 106", "Gedung Stovia"],
+                answer: 0, // A
+                hero: "Gedung KJB",
+                explanation: "Rapat pertama dilaksanakan di Gedung Katholieke Jongenlingen Bond (KJB), Lapangan Banteng."
+            },
+            {
+                id: 17,
+                question: "Apa nilai utama yang dapat kita teladani dari peristiwa Sumpah Pemuda untuk kehidupan berbangsa saat ini?",
+                options: ["Persatuan dan Kesatuan di tengah keberagaman", "Sikap individualisme", "Mementingkan kedaerahan", "Perpecahan antar kelompok"],
+                answer: 0, // A
+                hero: "Nilai Sumpah Pemuda",
+                explanation: "Sumpah Pemuda mengajarkan pentingnya persatuan, toleransi, dan mengesampingkan ego kedaerahan demi Bangsa."
+            },
+            {
+                id: 18,
+                question: "Tokoh pemuda yang menyampaikan pidato mengenai pentingnya pendidikan bagi anak-anak pada sesi terakhir Kongres adalah...",
+                options: ["Sarmidi Mangoensarkoro", "Ki Hajar Dewantara", "Siti Sundari", "Rasuna Said"],
+                answer: 0, // A
+                hero: "Sarmidi Mangoensarkoro",
+                explanation: "Sarmidi Mangoensarkoro berpidato pentingnya pendidikan kebangsaan dan keseimbangan antara pendidikan di sekolah dan rumah."
+            },
+            {
+                id: 19,
+                question: "Organisasi pemuda dari Sulawesi yang turut berikrar dalam Sumpah Pemuda adalah...",
+                options: ["Jong Celebes", "Jong Ambon", "Jong Minahasa", "Jong Java"],
+                answer: 0, // A
+                hero: "Senduk (Jong Celebes)",
+                explanation: "Jong Celebes mewakili para pemuda dari pulau Sulawesi (Celebes)."
+            },
+            {
+                id: 20,
+                question: "Gedung lokasi rapat kedua Kongres Pemuda II yang membahas masalah pendidikan adalah...",
+                options: ["Oost-Java Bioscoop", "Gedung Kramat 106", "Gedung KJB", "Gedung Kesenian Jakarta"],
+                answer: 0, // A
+                hero: "Oost-Java Bioscoop",
+                explanation: "Rapat kedua hari Minggu pagi 28 Oktober 1928 diadakan di Gedung Oost-Java Bioscoop membahas masalah pendidikan."
+            },
+            {
+                id: 21,
+                question: "Perempuan ikut serta aktif dalam Kongres Pemuda II. Salah satu tokoh pemuda perempuan yang hadir adalah...",
+                options: ["Siti Sundari & Emma Poeradiredja", "Cut Nyak Dien", "R.A. Kartini", "Dewi Sartika"],
+                answer: 0, // A
+                hero: "Tokoh Wanita Pemuda",
+                explanation: "Siti Sundari, Emma Poeradiredja, dan Sujatin adalah di antara perwakilan pemudi perempuan dalam Kongres Pemuda II."
+            },
+            {
+                id: 22,
+                question: "Apa julukan naskah Sumpah Pemuda saat pertama kali dibacakan dalam Kongres?",
+                options: ["Ikrar Pemuda", "Poetoesan Kongres Pemoeda-Pemoeda Indonesia", "Teks Proklamasi", "Piagam Jakarta"],
+                answer: 1, // B
+                hero: "Poetoesan Kongres",
+                explanation: "Naskah tersebut awalnya dinamai 'Poetoesan Kongres Pemoeda-Pemoeda Indonesia' sebelum populer disebut Sumpah Pemuda."
+            },
+            {
+                id: 23,
+                question: "Sumpah Pemuda menjadi tonggak sejarah pendorong lahirnya peristiwa besar...",
+                options: ["Proklamasi Kemerdekaan Indonesia 1945", "Perang Diponegoro", "Pertempuran Surabaya", "Konferensi Meja Bundar"],
+                answer: 0, // A
+                hero: "Proklamasi 1945",
+                explanation: "Persatuan pemuda dalam Sumpah Pemuda 1928 menjadi fondasi utama lahirnya Proklamasi Kemerdekaan Indonesia 17 Agustus 1945."
+            },
+            {
+                id: 24,
+                question: "Siapakah Pembantu I dalam susunan Panitia Kongres Pemuda II?",
+                options: ["Djohan Mohammad Cai", "Kuntjoro Purbopranoto", "Senduk", "Johanes Leimena"],
+                answer: 0, // A
+                hero: "Djohan Mohammad Cai",
+                explanation: "Djohan Mohammad Cai dari Jong Islamieten Bond menjabat sebagai Pembantu I Panitia Kongres."
+            },
+            {
+                id: 25,
+                question: "Semboyan persatuan Indonesia yang dijiwai oleh Sumpah Pemuda adalah...",
+                options: ["Bhinneka Tunggal Ika", "Tut Wuri Handayani", "Ing Ngarso Sung Tulodho", "Mitreka Satata"],
+                answer: 0, // A
+                hero: "Bhinneka Tunggal Ika",
+                explanation: "Bhinneka Tunggal Ika (Berbeda-beda tetapi tetap satu jua) sejalan dengan semangat Sumpah Pemuda menyatukan keanekaragaman."
+            }
+        ];
+
+        /* DATA TOKOH PAHLAWAN */
+        const heroData = [
+            {
+                name: "Soegondo Djojopoespito",
+                role: "Ketua Kongres Pemuda II",
+                desc: "Pemimpin bijaksana dari Perhimpunan Pelajar-Pelajar Indonesia (PPPI) yang berhasil mengarahkan jalannya Kongres Pemuda II hingga melahirkan ikrar persatuan.",
+                icon: "fa-user-tie"
+            },
+            {
+                name: "Mohammad Yamin",
+                role: "Sekretaris & Perumus Naskah",
+                desc: "Sastrawan dan politikus ulung dari Jong Sumatranen Bond yang merumuskan tiga bait naskah Sumpah Pemuda dan mendorong Bahasa Indonesia sebagai bahasa persatuan.",
+                icon: "fa-feather-pointed"
+            },
+            {
+                name: "Wage Rudolf Soepratman",
+                role: "Pencipta Lagu Indonesia Raya",
+                desc: "Wartawan dan komponis muda yang memperdengarkan simfoni instrumental biola 'Indonesia Raya' pertama kali di hadapan seluruh peserta kongres.",
+                icon: "fa-music"
+            },
+            {
+                name: "Amir Sjarifoeddin",
+                role: "Bendahara Kongres Pemuda II",
+                desc: "Mewakili Jong Bataks Bond, tokoh pemuda cerdas yang mengelola dukungan logistik dan dana perjuangan Kongres Pemuda II.",
+                icon: "fa-wallet"
+            },
+            {
+                name: "Sie Kong Lian",
+                role: "Pemilik Gedung Kramat 106",
+                desc: "Warga Tionghoa yang dengan ikhlas menyediakan rumah tinggalnya sebagai tempat berkumpulnya pemuda dan lokasi tercetusnya Sumpah Pemuda.",
+                icon: "fa-house-flag"
+            },
+            {
+                name: "M. Tabrani",
+                role: "Ketua Kongres Pemuda I",
+                desc: "Tokoh pers asal Madura yang memimpin Kongres Pemuda I (1926) dan pertama kali mengusulkan istilah 'Bahasa Indonesia'.",
+                icon: "fa-bullhorn"
+            }
+        ];
+
+        /* KALIMAT MOTIVASI APABILA BENAR & SALAH */
+        const positiveMotivations = [
+            "Luar biasa! Semangat perjuangan para pemuda ada dalam darahmu!",
+            "Tepat sekali! Kamu adalah pemuda penerus bangsa yang cerdas!",
+            "Hebat! Terus pertahankan semangat persatuan Indonesia!",
+            "Jawabanmu sempurna! Pemuda hebat pasti paham sejarah bangsanya!",
+            "Benar sekali! Merdeka! Semangat membara pemuda 1928!"
+        ];
+
+        const tryAgainMotivations = [
+            "Coba lagi! Jangan menyerah, pemuda Indonesia pantang putus asa!",
+            "Kurang tepat! Tetap semangat, pelajari lagi sejarah perjuangan bangsa!",
+            "Jangan berkecil hati! Ayo coba lagi dan temukan jawaban yang benar!"
+        ];
+
+        /* ==========================================================================
+           2. STATE MANAGEMENT & SYSTEM VARIABLES
+           ========================================================================== */
+        let currentQIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let wrongAnswersCount = 0;
+        let userAnswers = new Array(quizQuestions.length).fill(null);
+        let timerInterval = null;
+        let totalSeconds = 0;
+        let isCardFlipped = false;
+
+        let bgmEnabled = true;
+        let ttsEnabled = true;
+        let audioCtx = null;
+        let bgmOscillator = null;
+        let isBgmPlaying = false;
+
+        /* ==========================================================================
+           3. INITIALIZATION & AUDIO ENGINE (WEB AUDIO API & TTS)
+           ========================================================================== */
+        window.onload = function() {
+            renderHeroGallery();
+            setupQuizCard(currentQIndex);
+        };
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Web Audio Synthesizer Background Music
+        function startBGM() {
+            if (!bgmEnabled || isBgmPlaying) return;
+            initAudioContext();
+
+            try {
+                // Simple upbeat patriotic rhythm using Web Audio API
+                isBgmPlaying = true;
+                playBGMLoop();
+            } catch(e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        function playBGMLoop() {
+            if (!isBgmPlaying || !bgmEnabled) return;
+            
+            // Patriotic notes sequence (G4, C5, E5, G5...)
+            const notes = [392.00, 523.25, 659.25, 783.99, 659.25, 523.25];
+            let noteIdx = 0;
+
+            const interval = setInterval(() => {
+                if (!isBgmPlaying || !bgmEnabled) {
+                    clearInterval(interval);
+                    return;
+                }
+                playTone(notes[noteIdx], 0.15, 'sine', 0.05);
+                noteIdx = (noteIdx + 1) % notes.length;
+            }, 300);
+        }
+
+        function stopBGM() {
+            isBgmPlaying = false;
+        }
+
+        function toggleBGM() {
+            bgmEnabled = !bgmEnabled;
+            const bgmIcon = document.getElementById('bgm-icon');
+            const bgmText = document.getElementById('bgm-text');
+
+            if (bgmEnabled) {
+                bgmIcon.className = "fa-solid fa-music";
+                bgmText.innerText = "Musik ON";
+                startBGM();
+            } else {
+                bgmIcon.className = "fa-solid fa-volume-xmark";
+                bgmText.innerText = "Musik OFF";
+                stopBGM();
+            }
+        }
+
+        function toggleTTS() {
+            ttsEnabled = !ttsEnabled;
+            const ttsIcon = document.getElementById('tts-icon');
+            const ttsText = document.getElementById('tts-text');
+
+            if (ttsEnabled) {
+                ttsIcon.className = "fa-solid fa-volume-high";
+                ttsText.innerText = "Suara Motivasi ON";
+                speakText("Suara motivasi diaktifkan");
+            } else {
+                ttsIcon.className = "fa-solid fa-volume-xmark";
+                ttsText.innerText = "Suara Motivasi OFF";
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        }
+
+        // Synthesizer Sound Effects
+        function playSoundEffect(type) {
+            initAudioContext();
+            if (!audioCtx) return;
+
+            if (type === 'correct') {
+                // Happy Chime Sound
+                playTone(523.25, 0.1, 'triangle', 0.2); // C5
+                setTimeout(() => playTone(659.25, 0.1, 'triangle', 0.2), 100); // E5
+                setTimeout(() => playTone(783.99, 0.25, 'triangle', 0.3), 200); // G5
+            } else if (type === 'wrong') {
+                // Low Buzz Sound
+                playTone(220, 0.15, 'sawtooth', 0.2); // A3
+                setTimeout(() => playTone(196, 0.25, 'sawtooth', 0.2), 120); // G3
+            } else if (type === 'flip') {
+                // Card Flip Woosh
+                playTone(400, 0.08, 'sine', 0.1);
+            }
+        }
+
+        function playTone(freq, duration, type = 'sine', vol = 0.1) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // Speech Synthesis (TTS Indonesian)
+        function speakText(text) {
+            if (!ttsEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop ongoing speech
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        /* ==========================================================================
+           4. NAVIGATION & NAVIGATION FUNCTIONS
+           ========================================================================== */
+        function showSection(sectionId) {
+            // Hide all sections
+            ['menu-section', 'materi-section', 'pahlawan-section', 'quiz-section', 'result-section', 'review-section'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger music if starting quiz
+            if (sectionId === 'quiz-section') {
+                startBGM();
+            }
+        }
+
+        function renderHeroGallery() {
+            const container = document.getElementById('hero-gallery-grid');
+            container.innerHTML = '';
+
+            heroData.forEach(hero => {
+                const card = document.createElement('div');
+                card.className = "ellipse-card p-6 border-4 border-emas-juara flex items-center gap-4 bg-white";
+                card.innerHTML = `
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-merah-pancasila text-emas-juara flex items-center justify-center text-2xl sm:text-3xl border-2 border-emas-juara shadow flex-shrink-0">
+                        <i class="fa-solid ${hero.icon}"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold bg-red-100 text-merah-gelap px-2 py-0.5 rounded-full uppercase">${hero.role}</span>
+                        <h3 class="text-base sm:text-lg font-bold text-merah-gelap mt-0.5">${hero.name}</h3>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">${hero.desc}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* ==========================================================================
+           5. QUIZ GAME ENGINE & FLIP CARD MECHANICS
+           ========================================================================== */
+        function startQuiz() {
+            currentQIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            wrongAnswersCount = 0;
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            totalSeconds = 0;
+
+            document.getElementById('live-score').innerText = '0';
+            startTimer();
+            setupQuizCard(currentQIndex);
+            showSection('quiz-section');
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                totalSeconds++;
+                const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+                const secs = String(totalSeconds % 60).padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function setupQuizCard(index) {
+            const q = quizQuestions[index];
+            isCardFlipped = false;
+
+            // Reset Card Flip State to Front
+            document.getElementById('question-flip-card').classList.remove('is-flipped');
+
+            // Update Progress Header
+            document.getElementById('current-question-num').innerText = index + 1;
+            const progressPercent = ((index + 1) / quizQuestions.length) * 100;
+            document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
+
+            // Setup Front Cover Card (Ellipse)
+            document.getElementById('cover-q-num').innerText = index + 1;
+            document.getElementById('cover-q-title').innerText = `Pertanyaan #${index + 1}`;
+            document.getElementById('cover-hero-name').innerText = q.hero;
+
+            // Setup Back Card (Question Details)
+            document.getElementById('card-q-num').innerText = `${index + 1} dari 25`;
+            document.getElementById('question-text').innerText = q.question;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const optionPrefix = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left p-3.5 rounded-2xl border-2 transition font-semibold text-xs sm:text-sm flex items-center gap-3 shadow-sm hover:shadow border-gray-200 bg-gray-50 hover:bg-red-50 hover:border-merah-pancasila text-gray-800`;
+                btn.onclick = () => handleAnswerSelect(optIdx);
+                
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-merah-pancasila text-white flex items-center justify-center font-bold text-xs shadow flex-shrink-0">${optionPrefix[optIdx]}</span>
+                    <span class="flex-grow">${optText}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Hide Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.className = 'hidden';
+
+            // Disable / Enable Prev button
+            document.getElementById('btn-prev-q').disabled = index === 0;
+
+            // Update Next button text
+            const btnNext = document.getElementById('btn-next-q');
+            if (index === quizQuestions.length - 1) {
+                btnNext.innerHTML = `<span>Lihat Hasil Akhir</span> <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                btnNext.innerHTML = `<span>Soal Selanjutnya</span> <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            // If user already answered this previously
+            if (userAnswers[index] !== null) {
+                applyAnswerUI(userAnswers[index]);
+            }
+        }
+
+        function openQuestionCard() {
+            playSoundEffect('flip');
+            document.getElementById('question-flip-card').classList.add('is-flipped');
+            isCardFlipped = true;
+        }
+
+        function closeQuestionCard() {
+            playSoundEffect('flip');
+            document.getElementById('question-flip-card').classList.remove('is-flipped');
+            isCardFlipped = false;
+        }
+
+        function handleAnswerSelect(selectedOptionIdx) {
+            // Record Answer
+            const q = quizQuestions[currentQIndex];
+            const isCorrect = selectedOptionIdx === q.answer;
+            
+            // If first time answering this index
+            if (userAnswers[currentQIndex] === null) {
+                if (isCorrect) {
+                    score += 4; // 25 questions * 4 = 100 max score
+                    correctAnswersCount++;
+                } else {
+                    wrongAnswersCount++;
+                }
+                document.getElementById('live-score').innerText = score;
+            }
+
+            userAnswers[currentQIndex] = selectedOptionIdx;
+            applyAnswerUI(selectedOptionIdx);
+
+            // Audio & Motivation Trigger
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackStatus = document.getElementById('feedback-status');
+            const feedbackMotiv = document.getElementById('feedback-motivation');
+
+            feedbackBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSoundEffect('correct');
+                const randomMotiv = positiveMotivations[Math.floor(Math.random() * positiveMotivations.length)];
+                
+                feedbackBox.className = "mt-2 p-3 rounded-2xl border text-center transition-all bg-green-100 border-green-400 text-green-900";
+                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-check text-green-600 mr-1"></i> JAWABAN BENAR! (+4 Poin)`;
+                feedbackMotiv.innerText = randomMotiv;
+
+                // TTS Voice Output
+                speakText(`Jawaban Benar! ${randomMotiv}`);
+            } else {
+                playSoundEffect('wrong');
+                const randomTryAgain = tryAgainMotivations[Math.floor(Math.random() * tryAgainMotivations.length)];
+
+                feedbackBox.className = "mt-2 p-3 rounded-2xl border text-center transition-all bg-red-100 border-red-400 text-merah-gelap";
+                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-xmark text-merah-pancasila mr-1"></i> JAWABAN KURANG TEPAT!`;
+                feedbackMotiv.innerText = randomTryAgain;
+
+                // TTS Voice Output
+                speakText(`Coba lagi! Jangan menyerah, pemuda pantang putus asa!`);
+            }
+        }
+
+        function applyAnswerUI(selectedOptionIdx) {
+            const q = quizQuestions[currentQIndex];
+            const optionsBtns = document.querySelectorAll('.option-btn');
+
+            optionsBtns.forEach((btn, idx) => {
+                btn.disabled = true; // lock after answer
+                if (idx === q.answer) {
+                    btn.className = "option-btn w-full text-left p-3.5 rounded-2xl border-2 transition font-semibold text-xs sm:text-sm flex items-center gap-3 shadow bg-green-50 border-green-500 text-green-900";
+                } else if (idx === selectedOptionIdx) {
+                    btn.className = "option-btn w-full text-left p-3.5 rounded-2xl border-2 transition font-semibold text-xs sm:text-sm flex items-center gap-3 shadow bg-red-50 border-red-500 text-red-900";
+                } else {
+                    btn.className = "option-btn w-full text-left p-3.5 rounded-2xl border-2 transition font-semibold text-xs sm:text-sm flex items-center gap-3 opacity-50 bg-gray-50 border-gray-200 text-gray-500";
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < quizQuestions.length - 1) {
+                currentQIndex++;
+                setupQuizCard(currentQIndex);
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                setupQuizCard(currentQIndex);
+            }
+        }
+
+        /* ==========================================================================
+           6. FINISH QUIZ & REVIEW GENERATOR
+           ========================================================================== */
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            // Calculate stats
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('stat-correct').innerText = correctAnswersCount;
+            document.getElementById('stat-wrong').innerText = wrongAnswersCount;
+            
+            const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const secs = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById('stat-time').innerText = `${mins}:${secs}`;
+
+            // Predikat Text
+            const predikatEl = document.getElementById('predikat-text');
+            if (score >= 85) {
+                predikatEl.innerText = '"Pahlawan Pemuda Utama! Semangat Kebangsaan Luar Biasa!"';
+                speakText("Selamat! Kamu meraih predikat Pahlawan Pemuda Utama!");
+            } else if (score >= 60) {
+                predikatEl.innerText = '"Pemuda Pejuang Bangsa! Paham Sejarah Nasional!"';
+                speakText("Selamat! Kamu adalah Pemuda Pejuang Bangsa!");
+            } else {
+                predikatEl.innerText = '"Pemuda Pembelajar! Tingkatkan Lagi Semangatmu!"';
+                speakText("Tetap semangat! Pelajari kembali materi Sumpah Pemuda!");
+            }
+
+            renderReviewList();
+            showSection('result-section');
+        }
+
+        function renderReviewList() {
+            const container = document.getElementById('review-list-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.answer;
+
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `ellipse-card p-6 border-4 ${isCorrect ? 'border-green-400 bg-green-50/30' : 'border-red-400 bg-red-50/30'}`;
+
+                reviewItem.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 border-b pb-2 mb-3">
+                        <span class="font-bold text-xs ${isCorrect ? 'bg-green-600' : 'bg-merah-pancasila'} text-white px-3 py-1 rounded-full">
+                            Soal #${idx + 1} - ${isCorrect ? 'BENAR' : 'SALAH / DILEWATI'}
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500">Tokoh: ${q.hero}</span>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-2">${q.question}</h4>
+                    <p class="text-xs sm:text-sm text-gray-700 mb-1">
+                        <b>Jawaban Anda:</b> ${userAns !== null ? q.options[userAns] : '<i class="text-red-500">Tidak dijawab</i>'}
+                    </p>
+                    <p class="text-xs sm:text-sm text-green-800 font-semibold mb-2">
+                        <b>Kunci Jawaban Tepat:</b> ${q.options[q.answer]}
+                    </p>
+                    <div class="bg-white p-3 rounded-xl border border-gray-200 text-xs text-gray-600">
+                        <i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <b>Pembahasan:</b> ${q.explanation}
+                    </div>
+                `;
+
+                container.appendChild(reviewItem);
+            });
+        }
+    </script>
+</body>
+</html>
